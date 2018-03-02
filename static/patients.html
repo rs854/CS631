@@ -13,7 +13,6 @@
     crossorigin="anonymous">
   <!-- Custom styles for this template -->
   <link href="/static/index.css" rel="stylesheet">
-  <link href="/static/css/bootstrap-datepicker.standalone.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -28,17 +27,17 @@
   <div class="container">
     <div class="row">
       <div class="col-sm">
-        <h1>Add New Patient</h1>
+        <h2>Add New Patient</h2>
         <form>
           <div class="form-group row">
-            <label for="patientName" class="col-sm-3 col-form-label">Name</label>
-            <div class="col-sm-9">
+            <label for="patientName" class="col-sm-4 col-form-label">Name</label>
+            <div class="col-sm-8">
               <input type="text" class="form-control" id="patientName" placeholder="Name">
             </div>
           </div>
           <div class="form-group row">
-            <label for="patientGender" class="col-sm-3 col-form-label">Gender</label>
-            <div class="col-sm-9">
+            <label for="patientGender" class="col-sm-4 col-form-label">Gender</label>
+            <div class="col-sm-8">
               <select class="form-control" id="patientGender">
                 <option>Male</option>
                 <option>Female</option>
@@ -46,19 +45,23 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="patientAddress" class="col-sm-3 col-form-label">Address</label>
-            <div class="col-sm-9">
+            <label for="patientAddress" class="col-sm-4 col-form-label">Address</label>
+            <div class="col-sm-8">
               <input type="text" class="form-control" id="patientAddress" placeholder="1234 Main St">
             </div>
           </div>
           <div class="form-group row">
-            <div class="input-group date" data-provide="datepicker">
-              <input type="text" class="form-control">
-              <div class="input-group-addon">
-                <span class="glyphicon glyphicon-th"></span>
+              <label for="patientDOB" class="col-sm-4 col-form-label">Date of Birth</label>
+              <div class="col-sm-8">
+                <input type="date" class="form-control" id="patientDOB">
               </div>
             </div>
-          </div> 
+          <div class="form-group row">
+              <label for="patientPhoneNumber" class="col-sm-4 col-form-label">Phone No.</label>
+              <div class="col-sm-8">
+                <input type="tel" pattern="[\(]\d{3}[\)] \d{3}[\-]\d{4}" class="form-control" id="patientPhoneNumber" placeholder="(123) 456-7890">
+              </div>
+            </div>
         </form>
       </div>
       <div class="col-sm">
@@ -77,8 +80,6 @@
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
-  <script src="/static/js/bootstrap-datepicker.min.js"></script>
-  <script>$('.datepicker').datepicker();</script>
 </body>
 
 </html>
