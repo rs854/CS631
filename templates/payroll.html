@@ -4,25 +4,25 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <link rel="icon" href="/static/favicon.ico">
-  <title>Newark Medical Associates Web Portal</title>
+  <title>NJIT Fitness Club</title>
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
     crossorigin="anonymous">
   <!-- Custom styles for this template -->
   <link href="/static/index.css" rel="stylesheet"> </head> <body>
   <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-    <h5 class="my-0 mr-md-auto font-weight-normal">Newark Medical Associates</h5>
+    <h5 class="my-0 mr-md-auto font-weight-normal">NJIT Fitness Club</h5>
     <nav class="my-2 my-md-0 mr-md-3">
-      <a class="p-2 text-dark" href="/patients">Patients</a>
-      <a class="p-2 text-dark" href="#">In-Patients</a>
-      <a class="p-2 text-dark" href="#">Medical Staff</a>
+      <a class="p-2 text-dark" href="#">HR and Payroll</a>
+      <a class="p-2 text-dark" href="#">Exercise Class Management</a>
+      <a class="p-2 text-dark" href="#">Exercise Class Registration</a>
     </nav>
   </div>
   <div class="table table-striped table-sm table-hover">
-    <table id="patients">
+    <table id="instructors">
       <thead>
       <tr>
-        {% for key, value in patients[0].items() %}
+        {% for key, value in instructors[0].items() %}
         <td>
           {{key}}
         </td>
@@ -30,7 +30,7 @@
       </tr>
       </thead>
       <tbody>
-      {% for patient in patients %}
+      {% for patient in instructors %}
       <tr>
         {% for key, value in patient.items() %}
         <td>

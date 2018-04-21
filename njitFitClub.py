@@ -18,27 +18,20 @@ app.config['MYSQL_DATABASE_HOST'] = 'nma.cqcaflzcpcei.us-east-2.rds.amazonaws.co
 app.config['MYSQL_DATABASE_PORT'] = 33306
 mysql.init_app(app)
 
-static = '/var/www/nma/static/'
-templates = '/var/www/nma/templates/'
+static = '/var/www/njitFitClub/static/'
+templates = '/var/www/njitFitClub/templates/'
 
 @app.route("/")
 def index():
     return app.send_static_file('index.html')
 
 
-@app.route("/patients")
-def patients():
-    return app.send_static_file('patients.html')
-
-
-@app.route("/patient/<name>")
-def display_patient(name):
+@app.route("/payroll")
+def payroll():
     cursor = mysql.connect().cursor()
-    cursor.execute("SELECT * from Patients WHERE Name='%s'".format(name))
-    r = [dict((re.sub(r'([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))', r'\1 ', cur.description[i][0]), value)
-          for i, value in enumerate(row)) for row in cur.fetchall()]
-    row = cursor.fetchone()
-    return render_template('patient_list.html', patients=r)
+    cursor.execute("SELECT * from Instructor")
+    r = [dict((re.sub(r'([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))', r'\1 ', cursor.description[i][0]), value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+    return render_template('payroll.html', instructors=r)
 
 
 def json_serial(obj):
