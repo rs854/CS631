@@ -291,11 +291,12 @@ def edit_class():
         classID = request.form["classID"]
         duration = request.form["Duration"]
         start_time = request.form["StartTime"]
+        logging.error(start_time)
         room = request.form["Room"]
         exercise_type = request.form["ExerciseType"]
         instructor = request.form["Instructor"]
 
-        query = "UPDATE `ExerciseSchedule` SET `Duration`={}, `StartTime`='{}', `Room`={}, `ExerciseType`={}, `Instructor`={} WHERE `ID` = {}".format(duration, start_time, room, exercise_type, instructor, classID)
+        query = "UPDATE `ExerciseSchedule` SET `Duration`={}, `Room`={}, `ExerciseType`={}, `Instructor`={} WHERE `ID` = {}".format(duration, room, exercise_type, instructor, classID)
 
         cursor.execute(query)
         cnx.commit()
