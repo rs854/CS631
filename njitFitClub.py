@@ -273,10 +273,13 @@ def new_class():
         cursor = cnx.cursor()
         cursor.execute("SELECT ID, RoomNumber FROM Room")
         rooms = cursor.fetchall()
-        logging.error(json.dumps(rooms))
+        cursor.execute("SELECT ID, Name FROM ExerciseType")
+        exercises = cursor.fetchall()
+        cursor.execute("SELECT ID, Name FROM Instructor")
+        instructors = cursor.fetchall()
         cursor.close()
         cnx.close()
-        return render_template('new_class_form.html', rooms=rooms)
+        return render_template('new_class_form.html', rooms=rooms, exercises=exercises, instructors=instructors)
 
 
 @app.route("/classes/edit", methods=["GET", "POST"])
