@@ -271,7 +271,6 @@ def new_class():
     if request.method == "GET":
         cnx = mysql.connect()
         cursor = cnx.cursor()
-        classID = request.args["ClassID"]
         cursor.execute("SELECT ID, RoomNumber FROM Room")
         rooms = cursor.fetchall()
         logging.error(json.dumps(rooms))
