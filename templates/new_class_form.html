@@ -46,11 +46,19 @@
   </div>  
   <div class="form-group">
     <label for="ExerciseType">Exercise Type</label>
-    <input type="number" class="form-control" id="ExerciseType" name="ExerciseType">
+    <select class="form-control" id="ExerciseType" name="ExerciseType">
+        {% for exercise in exercises %}
+          <option value="{{exercise[0]}}">{{exercise[1]}}</option>
+        {% endfor %}
+    </select>
   </div>  
   <div class="form-group">
     <label for="Instructor">Instructor</label>
-    <input type="number" class="form-control" id="Instructor" name="Instructor">
+    <select class="form-control" id="Instructor" name="Instructor">
+        {% for instructor in instructors %}
+          <option value="{{instructor[0]}}">{{instructor[1]}}</option>
+        {% endfor %}
+    </select>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
