@@ -71,10 +71,46 @@ def new_employee():
     return 'Employee Added!<br><a href="/payroll">Go Back</a>'
 
 
-@app.route("/employees/<name>", methods=["GET", "POST"])
-def edit_employee(name):
+@app.route("/employees/edit", methods=["GET", "POST"])
+def edit_employee():
     if request.method == "GET":
-        return "EDIT EMPLOYEE FORM"
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        name = request.args["employeeName"]
+        cursor.execute("SELECT * FROM NJITFitnessClub.Instructor WHERE Name='{}'".format(name))
+        r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        cursor.close()
+        cnx.close()
+        return render_template('edit_employee_form.html', instructor=r[0])
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    if request.method == "POST":
+        name = request.form["Name"]
+        salary = request.form["Salary"]
+        wage = request.form["Wage"]
+        numberOfHoursTaught = request.form["NumberHoursTaught"]
+
+        if salary in ["", "None"]:
+            salary = "NULL"
+
+        if wage in ["", "None"]:
+            wage = "NULL"
+
+        if numberOfHoursTaught in ["", "None"]:
+            numberOfHoursTaught = "NULL"
+
+        query = "UPDATE `Instructor` SET `Salary`={}, `Wage`={}, `NumberHoursTaught`={} WHERE `Name` = '{}'".format(salary, wage, numberOfHoursTaught, name)
+
+        cursor.execute(query)
+        cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return '{} Record Updated!<br><a href="/payroll">Go Back</a>'.format(name)
+
 
 
 
