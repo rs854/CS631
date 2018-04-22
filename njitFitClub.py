@@ -250,7 +250,7 @@ def classes():
 
     if request.method == "POST":
         duration = request.form["Duration"]
-        start_time = request.form["StartTime"]
+        start_time = request.form["StartDate"] + " " + request.form["StartTime"]
         room = request.form["Room"]
         exercise_type = request.form["ExerciseType"]
         instructor = request.form["Instructor"]
