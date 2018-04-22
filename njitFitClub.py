@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask import render_template
 from flaskext.mysql import MySQL
 import flask
@@ -13,32 +13,123 @@ mysql = MySQL()
 app = Flask(__name__)
 app.config['MYSQL_DATABASE_USER'] = 'user'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'n17s21o1'
-app.config['MYSQL_DATABASE_DB'] = 'nma'
+app.config['MYSQL_DATABASE_DB'] = 'NJITFitnessClub'
 app.config['MYSQL_DATABASE_HOST'] = 'nma.cqcaflzcpcei.us-east-2.rds.amazonaws.com'
 app.config['MYSQL_DATABASE_PORT'] = 33306
 mysql.init_app(app)
 
-static = '/var/www/nma/static/'
-templates = '/var/www/nma/templates/'
+static = '/var/www/njitFitClub/static/'
+templates = '/var/www/njitFitClub/templates/'
 
 @app.route("/")
 def index():
     return app.send_static_file('index.html')
 
 
-@app.route("/patients")
-def patients():
-    return app.send_static_file('patients.html')
+@app.route("/payroll")
+def payroll():
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+    cursor.execute("SELECT * FROM NJITFitnessClub.Instructor")
+    r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+    cursor.close()
+    cnx.close()
+    return render_template('payroll.html', instructors=r)
 
 
-@app.route("/patient/<name>")
-def display_patient(name):
-    cursor = mysql.connect().cursor()
-    cursor.execute("SELECT * from Patients WHERE Name='%s'".format(name))
-    r = [dict((re.sub(r'([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))', r'\1 ', cur.description[i][0]), value)
-          for i, value in enumerate(row)) for row in cur.fetchall()]
-    row = cursor.fetchone()
-    return render_template('patient_list.html', patients=r)
+@app.route("/employees", methods=["GET", "POST"])
+def new_employee():
+    if request.method == "GET":
+        return app.send_static_file('new_employee_form.html')
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    if request.method == "POST":
+        name = request.form["Name"]
+        salary = request.form["Salary"]
+        wage = request.form["Wage"]
+        numberOfHoursTaught = request.form["NumberHoursTaught"]
+
+        if salary == "":
+            salary = "NULL"
+
+        if wage == "":
+            wage = "NULL"
+
+        if numberOfHoursTaught == "":
+            numberOfHoursTaught = "NULL"
+
+        query = "INSERT INTO `Instructor` (`Name`, `Salary`, `Wage`, `NumberHoursTaught`) VALUES ('{}', {}, {}, {});".format(name, salary, wage, numberOfHoursTaught)
+
+        cursor.execute(query)
+        cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return 'Employee Added!<br><a href="/payroll">Go Back</a>'
+
+
+@app.route("/employees/edit", methods=["GET", "POST"])
+def edit_employee():
+    if request.method == "GET":
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        name = request.args["employeeName"]
+        cursor.execute("SELECT * FROM NJITFitnessClub.Instructor WHERE Name='{}'".format(name))
+        r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        cursor.close()
+        cnx.close()
+        return render_template('edit_employee_form.html', instructor=r[0])
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    if request.method == "POST":
+        name = request.form["Name"]
+        salary = request.form["Salary"]
+        wage = request.form["Wage"]
+        numberOfHoursTaught = request.form["NumberHoursTaught"]
+
+        if salary in ["", "None"]:
+            salary = "NULL"
+
+        if wage in ["", "None"]:
+            wage = "NULL"
+
+        if numberOfHoursTaught in ["", "None"]:
+            numberOfHoursTaught = "NULL"
+
+        query = "UPDATE `Instructor` SET `Salary`={}, `Wage`={}, `NumberHoursTaught`={} WHERE `Name` = '{}'".format(salary, wage, numberOfHoursTaught, name)
+
+        cursor.execute(query)
+        cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return '{} Record Updated!<br><a href="/payroll">Go Back</a>'.format(name)
+
+
+
+
+@app.route("/employees/remove", methods=["GET"])
+def remove_employee():
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    name = request.args.get('employeeName', '')
+    query = "DELETE FROM `Instructor` WHERE `Name`='{}'".format(name)
+    cursor.execute(query)
+    cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return '{} Record Removed!<br><a href="/payroll">Go Back</a>'.format(name)
+
 
 
 def json_serial(obj):
