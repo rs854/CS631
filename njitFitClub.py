@@ -227,7 +227,19 @@ def classes():
     if request.method == "GET":
         cnx = mysql.connect()
         cursor = cnx.cursor()
-        cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseSchedule")
+        query = """
+        SELECT es.ID AS 'ID', 
+        es.Duration AS 'Duration', 
+        es.StartTime AS 'StartTime', 
+        r.RoomNumber AS 'Room', 
+        et.Name AS 'ExerciseType', 
+        i.Name AS 'Instructor'
+        FROM ExerciseSchedule es, Room r, ExerciseType et, Instructor i
+        WHERE es.Room = r.ID AND
+        es.ExerciseType = et.ID AND
+        es.Instructor = i.ID
+        """
+        cursor.execute(query)
         r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
         cursor.close()
         cnx.close()
