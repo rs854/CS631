@@ -274,6 +274,7 @@ def new_class():
         classID = request.args["classID"]
         cursor.execute("SELECT ID, RoomNumber FROM Room")
         rooms = cursor.fetchall()
+        logging.error(json.dumps(rooms))
         cursor.close()
         cnx.close()
         return render_template('new_class_form.html', rooms=rooms)
