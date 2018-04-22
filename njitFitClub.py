@@ -288,7 +288,7 @@ def edit_class():
     cursor = cnx.cursor()
 
     if request.method == "POST":
-        classID = request.args["classID"]
+        classID = request.form["classID"]
         duration = request.form["Duration"]
         start_time = request.form["StartTime"]
         room = request.form["Room"]
