@@ -26,15 +26,47 @@
     </nav>
   </div>
 <div class="mx-5" style="width:400px">
-  <h1>New Exercise</h1>
-<form action="/exercises" method="post">
+  <h1>Edit Exercise Class</h1>
+<form action="/classes/edit" method="post">
   <div class="form-group">
-    <label for="Name">Name</label>
-    <input class="form-control" id="Name" name="Name" placeholder="Full Name">
+    <label for="classID">Class ID</label>
+    <input type="number" class="form-control" id="classID" name="classID" value="{{exerciseClass["ID"]}}" readonly="readonly">
   </div>
   <div class="form-group">
-    <label for="Description">Description</label>
-    <input class="form-control" id="Description" name="Description">
+    <label for="Duration">Duration</label>
+    <input type="number" class="form-control" id="Duration" name="Duration" value="{{exerciseClass["Duration"]}}">
+  </div>
+  <div class="form-group">
+    <label for="StartDate">Start Date</label>
+    <input type="date" class="form-control" id="StartDate" name="StartDate" value="{{exerciseClass["StartDate"]}}">
+  </div> 
+  <div class="form-group">
+    <label for="StartTime">Start Time</label>
+    <input type="time" class="form-control" id="StartTime" name="StartTime" value="{{exerciseClass["StartTime"]}}">
+  </div> 
+  <div class="form-group">
+    <label for="Room">Room</label>
+    <select class="form-control" id="Room" name="Room" value="{{exerciseClass["Room"]}}">
+        {% for room in rooms %}
+          <option value="{{room[0]}}" {% if exerciseClass["Room"] == room[0] %}selected{% endif %}>{{room[1]}}</option>
+        {% endfor %}
+    </select>
+  </div>  
+  <div class="form-group">
+    <label for="ExerciseType">Exercise Type</label>
+    <select class="form-control" id="ExerciseType" name="ExerciseType" value="{{exerciseClass["ExerciseType"]}}">
+        {% for exercise in exercises %}
+          <option value="{{exercise[0]}}" {% if exerciseClass["ExerciseType"] == exercise[0] %}selected{% endif %}>{{exercise[1]}}</option>
+        {% endfor %}
+    </select>
+  </div>  
+  <div class="form-group">
+    <label for="Instructor">Instructor</label>
+    <select class="form-control" id="Instructor" name="Instructor" value="{{exerciseClass["Instructor"]}}">
+        {% for instructor in instructors %}
+          <option value="{{instructor[0]}}" {% if exerciseClass["Instructor"] == instructor[0] %}selected{% endif %}>{{instructor[1]}}</option>
+        {% endfor %}
+    </select>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>

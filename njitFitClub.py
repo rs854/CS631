@@ -112,8 +112,6 @@ def edit_employee():
     return '{} Record Updated!<br><a href="/payroll">Go Back</a>'.format(name)
 
 
-
-
 @app.route("/employees/remove", methods=["GET"])
 def remove_employee():
 
@@ -129,6 +127,8 @@ def remove_employee():
     cnx.close()
 
     return '{} Record Removed!<br><a href="/payroll">Go Back</a>'.format(name)
+
+
 
 
 
@@ -164,12 +164,10 @@ def exercises():
     return 'Exercise Added!<br><a href="/exercises">Go Back</a>'
 
 
-
 @app.route("/exercises/new", methods=["GET"])
 def new_exercise():
     if request.method == "GET":
         return app.send_static_file('new_exercise_form.html')
-
 
 
 @app.route("/exercises/edit", methods=["GET", "POST"])
@@ -205,8 +203,6 @@ def edit_exercise():
     return '{} Record Updated!<br><a href="/exercises">Go Back</a>'.format(name)
 
 
-
-
 @app.route("/exercises/remove", methods=["GET"])
 def remove_exercise():
 
@@ -222,6 +218,134 @@ def remove_exercise():
     cnx.close()
 
     return '{} Record Removed!<br><a href="/exercises">Go Back</a>'.format(name)
+
+
+
+
+@app.route("/classes", methods=["GET", "POST"])
+def classes():
+    if request.method == "GET":
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        query = """
+        SELECT es.ID AS 'ID', 
+        es.Duration AS 'Duration', 
+        es.StartTime AS 'StartTime', 
+        r.RoomNumber AS 'Room', 
+        et.Name AS 'ExerciseType', 
+        i.Name AS 'Instructor'
+        FROM ExerciseSchedule es, Room r, ExerciseType et, Instructor i
+        WHERE es.Room = r.ID AND
+        es.ExerciseType = et.ID AND
+        es.Instructor = i.ID
+        """
+        cursor.execute(query)
+        r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        cursor.close()
+        cnx.close()
+        return render_template('classes.html', classes=r)
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    if request.method == "POST":
+        duration = request.form["Duration"]
+        start_time = request.form["StartDate"] + " " + request.form["StartTime"]
+        room = request.form["Room"]
+        exercise_type = request.form["ExerciseType"]
+        instructor = request.form["Instructor"]
+
+        query = "INSERT INTO `ExerciseSchedule` (`Duration`, `StartTime`, `Room`, `ExerciseType`, `Instructor`) VALUES ({}, '{}', {}, {}, {});".format(duration, start_time, room, exercise_type, instructor)
+
+        cursor.execute(query)
+        cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return 'Exercise Class Added!<br><a href="/classes">Go Back</a>'
+
+
+@app.route("/classes/new", methods=["GET"])
+def new_class():
+    if request.method == "GET":
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        cursor.execute("SELECT ID, RoomNumber FROM Room")
+        rooms = cursor.fetchall()
+        cursor.execute("SELECT ID, Name FROM ExerciseType")
+        exercises = cursor.fetchall()
+        cursor.execute("SELECT ID, Name FROM Instructor")
+        instructors = cursor.fetchall()
+        cursor.close()
+        cnx.close()
+        return render_template('new_class_form.html', rooms=rooms, exercises=exercises, instructors=instructors)
+
+
+@app.route("/classes/edit", methods=["GET", "POST"])
+def edit_class():
+    if request.method == "GET":
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        classID = request.args["classID"]
+        cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseSchedule WHERE ID={}".format(classID))
+        r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        exerciseClass = r[0]
+        exerciseClass["StartDate"] = exerciseClass["StartTime"].strftime('%Y-%m-%d')
+        exerciseClass["StartTime"] = exerciseClass["StartTime"].strftime('%H:%M')
+        # start_date = date(start_datetime.year, start_datetime.month, start_datetime.day)
+        # start_time = 
+        cursor.execute("SELECT ID, RoomNumber FROM Room")
+        rooms = cursor.fetchall()
+        cursor.execute("SELECT ID, Name FROM ExerciseType")
+        exercises = cursor.fetchall()
+        cursor.execute("SELECT ID, Name FROM Instructor")
+        instructors = cursor.fetchall()
+        cursor.close()
+        cnx.close()
+        return render_template('edit_class_form.html', exerciseClass=exerciseClass, rooms=rooms, exercises=exercises, instructors=instructors)
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    if request.method == "POST":
+        classID = request.form["classID"]
+        duration = request.form["Duration"]
+        start_date = request.form["StartDate"]
+        start_time = request.form["StartTime"]
+        start_datetime = start_date + ' ' + start_time
+        logging.error(start_time)
+        room = request.form["Room"]
+        exercise_type = request.form["ExerciseType"]
+        instructor = request.form["Instructor"]
+
+        query = "UPDATE `ExerciseSchedule` SET `Duration`={}, `StartTime`='{}', `Room`={}, `ExerciseType`={}, `Instructor`={} WHERE `ID` = {}".format(duration, start_datetime, room, exercise_type, instructor, classID)
+
+        cursor.execute(query)
+        cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return 'Record Updated!<br><a href="/classes">Go Back</a>'
+
+
+@app.route("/classes/remove", methods=["GET"])
+def remove_class():
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    classID = request.args["classID"]
+    query = "DELETE FROM `ExerciseSchedule` WHERE `ID`={}".format(classID)
+    cursor.execute(query)
+    cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return 'Record Removed!<br><a href="/classes">Go Back</a>'
+
 
 
 
