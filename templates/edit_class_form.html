@@ -44,10 +44,7 @@
     <label for="Room">Room</label>
     <select class="form-control" id="Room" name="Room" value="{{exerciseClass["Room"]}}">
         {% for room in rooms %}
-          <option value="{{room[0]}}"
-          {% if exerciseClass["Room"] == room[0] %}
-          selected
-          {% endif %}>{{room[1]}}</option>
+          <option value="{{room[0]}}" {% if exerciseClass["Room"] == room[0] %}selected{% endif %}>{{room[1]}}</option>
         {% endfor %}
     </select>
   </div>  
@@ -55,7 +52,7 @@
     <label for="ExerciseType">Exercise Type</label>
     <select class="form-control" id="ExerciseType" name="ExerciseType" value="{{exerciseClass["ExerciseType"]}}">
         {% for exercise in exercises %}
-          <option value="{{exercise[0]}}">{{exercise[1]}}</option>
+          <option value="{{exercise[0]}}" {% if exerciseClass["ExerciseType"] == exercise[0] %}selected{% endif %}>{{exercise[1]}}</option>
         {% endfor %}
     </select>
   </div>  
@@ -63,7 +60,7 @@
     <label for="Instructor">Instructor</label>
     <select class="form-control" id="Instructor" name="Instructor" value="{{exerciseClass["Instructor"]}}">
         {% for instructor in instructors %}
-          <option value="{{instructor[0]}}">{{instructor[1]}}</option>
+          <option value="{{instructor[0]}}" {% if exerciseClass["Instructor"] == instructor[0] %}selected{% endif %}>{{instructor[1]}}</option>
         {% endfor %}
     </select>
   </div>
