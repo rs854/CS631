@@ -45,29 +45,55 @@ def new_employee():
     cnx = mysql.connect()
     cursor = cnx.cursor()
 
-    name = request.form["Name"]
-    salary = request.form["Salary"]
-    wage = request.form["Wage"]
-    numberOfHoursTaught = request.form["NumberHoursTaught"]
+    if request.method == "POST":
+        name = request.form["Name"]
+        salary = request.form["Salary"]
+        wage = request.form["Wage"]
+        numberOfHoursTaught = request.form["NumberHoursTaught"]
 
-    if salary == "":
-        salary = "NULL"
+        if salary == "":
+            salary = "NULL"
 
-    if wage == "":
-        wage = "NULL"
+        if wage == "":
+            wage = "NULL"
 
-    if numberOfHoursTaught == "":
-        numberOfHoursTaught = "NULL"
+        if numberOfHoursTaught == "":
+            numberOfHoursTaught = "NULL"
 
-    query = "INSERT INTO `Instructor` (`Name`, `Salary`, `Wage`, `NumberHoursTaught`) VALUES ('{}', {}, {}, {});".format(name, salary, wage, numberOfHoursTaught)
-    logging.info(query)
+        query = "INSERT INTO `Instructor` (`Name`, `Salary`, `Wage`, `NumberHoursTaught`) VALUES ('{}', {}, {}, {});".format(name, salary, wage, numberOfHoursTaught)
 
-    cursor.execute(query)
-    cnx.commit()
+        cursor.execute(query)
+        cnx.commit()
+
     cursor.close()
     cnx.close()
 
-    return "Employee Added"
+    return 'Employee Added!<br><a href="/payroll">Go Back</a>'
+
+
+@app.route("/employees/<name>", methods=["GET", "POST"])
+def edit_employee(name):
+    if request.method == "GET":
+        return "EDIT EMPLOYEE FORM"
+
+
+
+@app.route("/employees/remove", methods=["GET"])
+def remove_employee():
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    name = request.args.get('employeeName', '')
+    query = "DELETE FROM `Instructor` WHERE `Name`='{}'".format(name)
+    cursor.execute(query)
+    cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return '{} Record Removed!<br><a href="/payroll">Go Back</a>'.format(name)
+
 
 
 def json_serial(obj):
