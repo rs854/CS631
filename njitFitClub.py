@@ -270,7 +270,7 @@ def edit_class():
         r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
         cursor.close()
         cnx.close()
-        return render_template('edit_class_form.html', exercise=r[0])
+        return render_template('edit_class_form.html', exerciseClass=r[0])
 
     cnx = mysql.connect()
     cursor = cnx.cursor()
