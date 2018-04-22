@@ -269,7 +269,14 @@ def classes():
 @app.route("/classes/new", methods=["GET"])
 def new_class():
     if request.method == "GET":
-        return app.send_static_file('new_class_form.html')
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        classID = request.args["classID"]
+        cursor.execute("SELECT ID, RoomNumber FROM Room")
+        rooms = cursor.fetchall()
+        cursor.close()
+        cnx.close()
+        return render_template('new_class_form.html', rooms=rooms)
 
 
 @app.route("/classes/edit", methods=["GET", "POST"])
