@@ -26,15 +26,27 @@
     </nav>
   </div>
 <div class="mx-5" style="width:400px">
-  <h1>New Exercise</h1>
+  <h1>New Exercise Class</h1>
 <form action="/exercises" method="post">
   <div class="form-group">
-    <label for="Name">Name</label>
-    <input class="form-control" id="Name" name="Name" placeholder="Full Name">
+    <label for="Duration">Duration</label>
+    <input type="number" class="form-control" id="Duration" name="Duration">
   </div>
   <div class="form-group">
-    <label for="Description">Description</label>
-    <input class="form-control" id="Description" name="Description">
+    <label for="StartTime">Start Time</label>
+    <input class="form-control" id="StartTime" name="StartTime">
+  </div>  
+  <div class="form-group">
+    <label for="Room">Room</label>
+    <input type="number" class="form-control" id="Room" name="Room">
+  </div>  
+  <div class="form-group">
+    <label for="ExerciseType">Exercise Type</label>
+    <input type="number" class="form-control" id="ExerciseType" name="ExerciseType">
+  </div>  
+  <div class="form-group">
+    <label for="Instructor">Instructor</label>
+    <input type="number" class="form-control" id="Instructor" name="Instructor">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
