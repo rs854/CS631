@@ -290,6 +290,10 @@ def edit_class():
         classID = request.args["classID"]
         cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseSchedule WHERE ID={}".format(classID))
         r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        exerciseClass = r[0]
+        exerciseClass["StartDate"] = exerciseClass["StartTime"]
+        # start_date = date(start_datetime.year, start_datetime.month, start_datetime.day)
+        # start_time = 
         cursor.execute("SELECT ID, RoomNumber FROM Room")
         rooms = cursor.fetchall()
         cursor.execute("SELECT ID, Name FROM ExerciseType")
@@ -298,7 +302,7 @@ def edit_class():
         instructors = cursor.fetchall()
         cursor.close()
         cnx.close()
-        return render_template('edit_class_form.html', exerciseClass=r[0], rooms=rooms, exercises=exercises, instructors=instructors)
+        return render_template('edit_class_form.html', exerciseClass=exerciseClass, rooms=rooms, exercises=exercises, instructors=instructors)
 
     cnx = mysql.connect()
     cursor = cnx.cursor()
