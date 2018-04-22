@@ -11,7 +11,7 @@
   <!-- Custom styles for this template -->
   <link href="/static/index.css" rel="stylesheet"> </head> <body>
   <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-    <h5 class="my-0 mr-md-auto font-weight-normal">NJIT Fitness Club</h5>
+    <a href="/" class="my-0 mr-md-auto font-weight-normal text-dark"><h5>NJIT Fitness Club</h5></a>
     <nav class="my-2 my-md-0 mr-md-3">
       <a class="p-2 text-dark" href="#">HR and Payroll</a>
       <a class="p-2 text-dark" href="#">Exercise Class Management</a>
@@ -19,24 +19,53 @@
     </nav>
   </div>
   <div class="table table-striped table-sm table-hover">
+    <a href="employees" role="button" class="btn btn-primary">Add Employee</a>
+    <button type="button" class="btn btn-primary">Edit Employee</button>
+    <button type="button" class="btn btn-primary">Remove Employee</button>
     <table id="instructors">
       <thead>
       <tr>
-        {% for key, value in instructors[0].items() %}
         <td>
-          {{key}}
+          <b>Name</b>
         </td>
-        {% endfor %}
+        <td>
+          <b>Salary</b>
+        </td>
+        <td>
+          <b>Wage</b>
+        </td>
+        <td>
+          <b>No. of Hours Taught</b>
+        </td>
+        <td>
+          <b>Monthly Pay Before Taxes</b>
+        </td>
+        <td>
+          <b>Monthly Pay After Taxes</b>
+        </td>
       </tr>
       </thead>
       <tbody>
-      {% for patient in instructors %}
+      {% for instructor in instructors %}
       <tr>
-        {% for key, value in patient.items() %}
         <td>
-          {{value}}
+          {{instructor["Name"]}}
         </td>
-        {% endfor %}
+        <td>
+          {{instructor["Salary"]}}
+        </td>
+        <td>
+          {{instructor["Wage"]}}
+        </td>
+        <td>
+          {{instructor["NumberHoursTaught"]}}
+        </td>
+        <td>
+          {{instructor["MonthlyPayBeforeTaxes"]}}
+        </td>
+        <td>
+          {{instructor["MonthlyPayAfterTaxes"]}}
+        </td>
       </tr>
       {% endfor %}
       </tbody>
