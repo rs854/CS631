@@ -42,15 +42,27 @@
   </div>  
   <div class="form-group">
     <label for="Room">Room</label>
-    <input type="number" class="form-control" id="Room" name="Room" value="{{exerciseClass["Room"]}}">
+    <select class="form-control" id="Room" name="Room" value="{{exerciseClass["Room"]}}">
+        {% for room in rooms %}
+          <option value="{{room[0]}}">{{room[1]}}</option>
+        {% endfor %}
+    </select>
   </div>  
   <div class="form-group">
     <label for="ExerciseType">Exercise Type</label>
-    <input type="number" class="form-control" id="ExerciseType" name="ExerciseType" value="{{exerciseClass["ExerciseType"]}}">
+    <select class="form-control" id="ExerciseType" name="ExerciseType" value="{{exerciseClass["ExerciseType"]}}">
+        {% for exercise in exercises %}
+          <option value="{{exercise[0]}}">{{exercise[1]}}</option>
+        {% endfor %}
+    </select>
   </div>  
   <div class="form-group">
     <label for="Instructor">Instructor</label>
-    <input type="number" class="form-control" id="Instructor" name="Instructor" value="{{exerciseClass["Instructor"]}}">
+    <select class="form-control" id="Instructor" name="Instructor" value="{{exerciseClass["Instructor"]}}">
+        {% for instructor in instructors %}
+          <option value="{{instructor[0]}}">{{instructor[1]}}</option>
+        {% endfor %}
+    </select>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
