@@ -313,7 +313,7 @@ def edit_class():
         duration = request.form["Duration"]
         start_date = request.form["StartDate"]
         start_time = request.form["StartTime"]
-        start_datetime = date + ' ' + start_time
+        start_datetime = start_date + ' ' + start_time
         logging.error(start_time)
         room = request.form["Room"]
         exercise_type = request.form["ExerciseType"]
