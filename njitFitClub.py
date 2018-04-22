@@ -132,6 +132,97 @@ def remove_employee():
 
 
 
+@app.route("/exercises")
+def exercises():
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+    cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseType")
+    r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+    cursor.close()
+    cnx.close()
+    return render_template('exercises.html', exercies=r)
+
+
+@app.route("/exercises", methods=["GET", "POST"])
+def new_exercise():
+    if request.method == "GET":
+        return app.send_static_file('new_exercise_form.html')
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    if request.method == "POST":
+        name = request.form["Name"]
+        description = request.form["Description"]
+
+        if description == "":
+            description = "NULL"
+
+        query = "INSERT INTO `ExerciseType` (`Name`, `Description`) VALUES ('{}', {});".format(name, description)
+
+        cursor.execute(query)
+        cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return 'Exercise Added!<br><a href="/exercises">Go Back</a>'
+
+
+@app.route("/exercises/edit", methods=["GET", "POST"])
+def edit_exercise():
+    if request.method == "GET":
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        name = request.args["exerciseName"]
+        cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseType WHERE Name='{}'".format(name))
+        r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        cursor.close()
+        cnx.close()
+        return render_template('edit_exercise_form.html', exercise=r[0])
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    if request.method == "POST":
+        name = request.form["Name"]
+        description = request.form["Description"]
+
+        if description in ["", "None"]:
+            description = "NULL"
+
+        query = "UPDATE `ExerciseType` SET `Description`={} WHERE `Name` = '{}'".format(description, name)
+
+        cursor.execute(query)
+        cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return '{} Record Updated!<br><a href="/exercises">Go Back</a>'.format(name)
+
+
+
+
+@app.route("/exercises/remove", methods=["GET"])
+def remove_exercise():
+
+    cnx = mysql.connect()
+    cursor = cnx.cursor()
+
+    name = request.args.get('exerciseName', '')
+    query = "DELETE FROM `ExerciseType` WHERE `Name`='{}'".format(name)
+    cursor.execute(query)
+    cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    return '{} Record Removed!<br><a href="/exercises">Go Back</a>'.format(name)
+
+
+
+
 def json_serial(obj):
     """JSON serializer for objects not serializable by default json code"""
 
