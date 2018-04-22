@@ -291,7 +291,8 @@ def edit_class():
         cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseSchedule WHERE ID={}".format(classID))
         r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
         exerciseClass = r[0]
-        exerciseClass["StartDate"] = exerciseClass["StartTime"]
+        exerciseClass["StartDate"] = exerciseClass["StartTime"].strftime('%Y-%m-%d')
+        exerciseClass["StartTime"] = exerciseClass["StartTime"].strftime('%H:%M')
         # start_date = date(start_datetime.year, start_datetime.month, start_datetime.day)
         # start_time = 
         cursor.execute("SELECT ID, RoomNumber FROM Room")
