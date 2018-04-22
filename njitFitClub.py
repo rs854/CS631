@@ -287,7 +287,7 @@ def edit_class():
     if request.method == "GET":
         cnx = mysql.connect()
         cursor = cnx.cursor()
-        classID = request.args["ClassID"]
+        classID = request.args["classID"]
         cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseSchedule WHERE ID={}".format(classID))
         r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
         cursor.execute("SELECT ID, RoomNumber FROM Room")
@@ -304,7 +304,7 @@ def edit_class():
     cursor = cnx.cursor()
 
     if request.method == "POST":
-        classID = request.form["ClassID"]
+        classID = request.form["classID"]
         duration = request.form["Duration"]
         start_time = request.form["StartTime"]
         logging.error(start_time)
@@ -329,7 +329,7 @@ def remove_class():
     cnx = mysql.connect()
     cursor = cnx.cursor()
 
-    classID = request.args["ClassID"]
+    classID = request.args["classID"]
     query = "DELETE FROM `ExerciseSchedule` WHERE `ID`={}".format(classID)
     cursor.execute(query)
     cnx.commit()
