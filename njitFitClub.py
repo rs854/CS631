@@ -7,7 +7,8 @@ import re
 import os
 from datetime import date, datetime
 import logging, sys
-logging.basicConfig(stream=sys.stderr)
+
+debug = False
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -20,6 +21,13 @@ mysql.init_app(app)
 
 static = '/var/www/njitFitClub/static/'
 templates = '/var/www/njitFitClub/templates/'
+
+if debug:
+    app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+    static = './static/'
+    templates = './templates/'
+else:
+    logging.basicConfig(stream=sys.stderr)
 
 @app.route("/")
 def index():
