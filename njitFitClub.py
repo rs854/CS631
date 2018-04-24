@@ -150,8 +150,6 @@ def remove_employee():
 
 
 
-
-
 @app.route("/exercises", methods=["GET", "POST"])
 def exercises():
     if request.method == "GET":
@@ -241,7 +239,6 @@ def remove_exercise():
 
 
 
-
 @app.route("/classes", methods=["GET", "POST"])
 def classes():
     if request.method == "GET":
@@ -284,6 +281,42 @@ def classes():
     cnx.close()
 
     return 'Exercise Class Added!<br><a href="/classes">Go Back</a>'
+
+@app.route("/classes/register", methods=["GET", "POST"])
+def class_registration():
+    if request.method == "GET":
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        query = """
+        SELECT mes.ExerciseSchedule 'ClassID', et.Name 'ExerciseType', es.StartTime, es.Duration, 
+            r.BuildingName, r.RoomNumber, i.Name 'Instructor', r.Capacity, COUNT(mes.Member) 'Registered'
+        FROM ExerciseSchedule es, Room r, MemberExerciseSchedule mes, ExerciseType et, Instructor i
+        WHERE es.StartTime > NOW() AND
+            es.Room = r.ID AND
+            es.ID = mes.ExerciseSchedule AND
+            es.ExerciseType = et.ID AND
+            es.Instructor = i.ID
+        GROUP BY mes.ExerciseSchedule
+        HAVING COUNT(mes.Member) < r.Capacity
+        """
+        cursor.execute(query)
+        r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        cursor.execute("SELECT * FROM Member")
+        m = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        cursor.close()
+        cnx.close()
+        return render_template('class_registration.html', classes=r, members=m)
+    if request.method == "POST":
+        classID = request.form["classID"]
+        member = request.form["member"]
+        cnx = mysql.connect()
+        cursor = cnx.cursor()  
+        query = "INSERT INTO `MemberExerciseSchedule` (`Member`, `ExerciseSchedule`) VALUES ({}, '{}');".format(member, classID)
+        cursor.execute(query)
+        cnx.commit()      
+        cursor.close()
+        cnx.close()
+        return 'Registration complete!<br><a href="/classes/register">Go Back</a>'
 
 
 @app.route("/classes/new", methods=["GET"])
