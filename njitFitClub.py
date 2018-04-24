@@ -8,7 +8,7 @@ import os
 from datetime import date, datetime
 import logging, sys
 
-debug = False
+debug = True
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -24,6 +24,9 @@ templates = '/var/www/njitFitClub/templates/'
 
 if debug:
     app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+    app.config['MYSQL_DATABASE_USER'] = 'root'
+    app.config['MYSQL_DATABASE_PASSWORD'] = 'n17s21o1'
+    app.config['MYSQL_DATABASE_PORT'] = 3306
     static = './static/'
     templates = './templates/'
 else:
