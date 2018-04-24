@@ -8,7 +8,7 @@ import os
 from datetime import date, datetime
 import logging, sys
 
-debug = True
+debug = False
 
 mysql = MySQL()
 app = Flask(__name__)
