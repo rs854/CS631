@@ -48,27 +48,40 @@ def payroll():
     return render_template('payroll.html', instructors=r)
 
 
-@app.route("/employees", methods=["GET", "POST"])
-def new_employee():
-    if request.method == "GET":
-        return app.send_static_file('new_employee_form.html')
+@app.route("/employees/<type>", methods=["GET"])
+def new_employee_form(type):
+    if type == "salaried":
+        return app.send_static_file('new_salaried_employee_form.html')
+    else:
+        return app.send_static_file('new_hourly_employee_form.html')
 
+
+@app.route("/employees", methods=["POST"])
+def new_employee():
     cnx = mysql.connect()
     cursor = cnx.cursor()
 
     if request.method == "POST":
-        name = request.form["Name"]
-        salary = request.form["Salary"]
-        wage = request.form["Wage"]
-        numberOfHoursTaught = request.form["NumberHoursTaught"]
+        name = ""
+        salary = ""
+        wage = ""
+        numberOfHoursTaught = ""
 
-        if salary == "":
+        try:
+            name = request.form["Name"]
+        except:
+            name = "NULL"
+        try:
+            salary = request.form["Salary"]
+        except:
             salary = "NULL"
-
-        if wage == "":
+        try:
+            wage = request.form["Wage"]
+        except:
             wage = "NULL"
-
-        if numberOfHoursTaught == "":
+        try:
+            numberOfHoursTaught = request.form["NumberHoursTaught"]
+        except:
             numberOfHoursTaught = "NULL"
 
         query = "INSERT INTO `Instructor` (`Name`, `Salary`, `Wage`, `NumberHoursTaught`) VALUES ('{}', {}, {}, {});".format(name, salary, wage, numberOfHoursTaught)
