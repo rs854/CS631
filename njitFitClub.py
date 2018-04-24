@@ -8,7 +8,7 @@ import os
 from datetime import date, datetime
 import logging, sys
 
-debug = True
+debug = False
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -282,7 +282,7 @@ def classes():
 
     return 'Exercise Class Added!<br><a href="/classes">Go Back</a>'
 
-@app.route("/classes/register", methods=["GET"])
+@app.route("/classes/register", methods=["GET", "POST"])
 def class_registration():
     if request.method == "GET":
         cnx = mysql.connect()
@@ -306,6 +306,17 @@ def class_registration():
         cursor.close()
         cnx.close()
         return render_template('class_registration.html', classes=r, members=m)
+    if request.method == "POST":
+        classID = request.form["classID"]
+        member = request.form["member"]
+        cnx = mysql.connect()
+        cursor = cnx.cursor()  
+        query = "INSERT INTO `MemberExerciseSchedule` (`Member`, `ExerciseSchedule`) VALUES ({}, '{}');".format(member, classID)
+        cursor.execute(query)
+        cnx.commit()      
+        cursor.close()
+        cnx.close()
+        return 'Registration complete!<br><a href="/classes/register">Go Back</a>'
 
 
 @app.route("/classes/new", methods=["GET"])

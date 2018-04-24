@@ -21,11 +21,11 @@
   </div>
   <div class="mx-3">
     <h2>Class Registration</h2>
-    <form action="/classes/register" method="GET" class="my-2 form-inline">
+    <form action="/classes/register" method="POST" class="my-2 form-inline">
       <label for="member">Member</label>
       <select class="form-control mr-2" id="member" name="member" style="width:200px">
         {% for member in members %}
-          <option>{{member["Name"]}}</option>
+          <option value="{{member["ID"]}}">{{member["Name"]}}</option>
         {% endfor %}
       </select>
       <label for="classID">Class ID</label>
