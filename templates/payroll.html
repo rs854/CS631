@@ -71,19 +71,19 @@
           {{instructor["Name"]}}
         </td>
         <td>
-          {{instructor["Salary"]}}
+          {% if instructor["Salary"] %} {{ "$%.2f"|format(instructor["Salary"]) }} {% else %} -- {% endif %}
         </td>
         <td>
-          {{instructor["Wage"]}}
+          {% if instructor["Wage"] %} {{ "$%.2f/hr"|format(instructor["Wage"]) }} {% else %} -- {% endif %}
         </td>
         <td>
-          {{instructor["NumberHoursTaught"]}}
+          {% if instructor["NumberHoursTaught"] %} {{ "%d"|format(instructor["NumberHoursTaught"]) }} {% else %} -- {% endif %}
         </td>
         <td>
-          {{instructor["MonthlyPayBeforeTaxes"]}}
+          {% if instructor["MonthlyPayBeforeTaxes"] %} {{ "$%.2f"|format(instructor["MonthlyPayBeforeTaxes"]) }} {% else %} -- {% endif %}
         </td>
         <td>
-          {{instructor["MonthlyPayAfterTaxes"]}}
+          {% if instructor["MonthlyPayAfterTaxes"] %} {{ "$%.2f"|format(instructor["MonthlyPayAfterTaxes"]) }} {% else %} -- {% endif %}
         </td>
       </tr>
       {% endfor %}

@@ -106,11 +106,9 @@ def edit_employee():
         cursor.close()
         cnx.close()
         return render_template('edit_employee_form.html', instructor=r[0])
-
-    cnx = mysql.connect()
-    cursor = cnx.cursor()
-
-    if request.method == "POST":
+    else:
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
         name = request.form["Name"]
         salary = request.form["Salary"]
         wage = request.form["Wage"]
@@ -129,11 +127,9 @@ def edit_employee():
 
         cursor.execute(query)
         cnx.commit()
-
-    cursor.close()
-    cnx.close()
-
-    return '{} Record Updated!<br><a href="/payroll">Go Back</a>'.format(name)
+        cursor.close()
+        cnx.close()
+        return '{} Record Updated!<br><a href="/payroll">Go Back</a>'.format(name)
 
 
 @app.route("/employees/remove", methods=["GET"])
