@@ -26,15 +26,19 @@
     </nav>
   </div>
 <div class="mx-5" style="width:400px">
-  <h1>Edit Exercise</h1>
-<form action="/exercises/edit" method="post">
+  <h1>New Employee</h1>
+<form action="/employees" method="post">
   <div class="form-group">
     <label for="Name">Name</label>
-    <input class="form-control" id="Name" name="Name" placeholder="Full Name" value="{{exercise["Name"]}}">
+    <input class="form-control" id="Name" name="Name" placeholder="Full Name">
   </div>
   <div class="form-group">
-    <label for="Description">Description</label>
-    <textarea class="form-control" id="Description" name="Description">{{exercise["Description"]}}</textarea>
+    <label for="Wage">Wage</label>
+    <input type="number" class="form-control" id="Wage" name="Wage">
+  </div>
+  <div class="form-group">
+    <label for="NumberHoursTaught">Number of Hours Taught</label>
+    <input type="number" class="form-control" id="NumberHoursTaught" name="NumberHoursTaught">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>

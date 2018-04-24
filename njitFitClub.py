@@ -7,7 +7,8 @@ import re
 import os
 from datetime import date, datetime
 import logging, sys
-logging.basicConfig(stream=sys.stderr)
+
+debug = False
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -20,6 +21,16 @@ mysql.init_app(app)
 
 static = '/var/www/njitFitClub/static/'
 templates = '/var/www/njitFitClub/templates/'
+
+if debug:
+    app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+    app.config['MYSQL_DATABASE_USER'] = 'root'
+    app.config['MYSQL_DATABASE_PASSWORD'] = 'n17s21o1'
+    app.config['MYSQL_DATABASE_PORT'] = 3306
+    static = './static/'
+    templates = './templates/'
+else:
+    logging.basicConfig(stream=sys.stderr)
 
 @app.route("/")
 def index():
@@ -37,27 +48,40 @@ def payroll():
     return render_template('payroll.html', instructors=r)
 
 
-@app.route("/employees", methods=["GET", "POST"])
-def new_employee():
-    if request.method == "GET":
-        return app.send_static_file('new_employee_form.html')
+@app.route("/employees/<type>", methods=["GET"])
+def new_employee_form(type):
+    if type == "salaried":
+        return app.send_static_file('new_salaried_employee_form.html')
+    else:
+        return app.send_static_file('new_hourly_employee_form.html')
 
+
+@app.route("/employees", methods=["POST"])
+def new_employee():
     cnx = mysql.connect()
     cursor = cnx.cursor()
 
     if request.method == "POST":
-        name = request.form["Name"]
-        salary = request.form["Salary"]
-        wage = request.form["Wage"]
-        numberOfHoursTaught = request.form["NumberHoursTaught"]
+        name = ""
+        salary = ""
+        wage = ""
+        numberOfHoursTaught = ""
 
-        if salary == "":
+        try:
+            name = request.form["Name"]
+        except:
+            name = "NULL"
+        try:
+            salary = request.form["Salary"]
+        except:
             salary = "NULL"
-
-        if wage == "":
+        try:
+            wage = request.form["Wage"]
+        except:
             wage = "NULL"
-
-        if numberOfHoursTaught == "":
+        try:
+            numberOfHoursTaught = request.form["NumberHoursTaught"]
+        except:
             numberOfHoursTaught = "NULL"
 
         query = "INSERT INTO `Instructor` (`Name`, `Salary`, `Wage`, `NumberHoursTaught`) VALUES ('{}', {}, {}, {});".format(name, salary, wage, numberOfHoursTaught)
@@ -82,11 +106,9 @@ def edit_employee():
         cursor.close()
         cnx.close()
         return render_template('edit_employee_form.html', instructor=r[0])
-
-    cnx = mysql.connect()
-    cursor = cnx.cursor()
-
-    if request.method == "POST":
+    else:
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
         name = request.form["Name"]
         salary = request.form["Salary"]
         wage = request.form["Wage"]
@@ -105,11 +127,9 @@ def edit_employee():
 
         cursor.execute(query)
         cnx.commit()
-
-    cursor.close()
-    cnx.close()
-
-    return '{} Record Updated!<br><a href="/payroll">Go Back</a>'.format(name)
+        cursor.close()
+        cnx.close()
+        return '{} Record Updated!<br><a href="/payroll">Go Back</a>'.format(name)
 
 
 @app.route("/employees/remove", methods=["GET"])
