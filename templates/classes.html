@@ -20,6 +20,7 @@
     </nav>
   </div>
   <div class="mx-3">
+    <h2>Class Management</h2>
     <a href="classes/new" role="button" class="btn btn-primary">Add Class</a>
     <br>    
     <form action="/classes/edit" method="GET" class="my-2 form-inline">
@@ -55,6 +56,9 @@
         <td>
           <b>Room</b>
         </td>
+	<td>
+	  <b>Building</b>
+	</td>
         <td>
           <b>Exercise Type</b>
         </td>
@@ -78,6 +82,9 @@
         <td>
           {{class["Room"]}}
         </td>
+	<td>
+	  {{class["BuildingName"]}}
+	</td>
         <td>
           {{class["ExerciseType"]}}
         </td>

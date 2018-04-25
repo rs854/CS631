@@ -150,8 +150,6 @@ def remove_employee():
 
 
 
-
-
 @app.route("/exercises", methods=["GET", "POST"])
 def exercises():
     if request.method == "GET":
@@ -241,7 +239,6 @@ def remove_exercise():
 
 
 
-
 @app.route("/classes", methods=["GET", "POST"])
 def classes():
     if request.method == "GET":
@@ -251,6 +248,7 @@ def classes():
         SELECT es.ID AS 'ID', 
         es.Duration AS 'Duration', 
         es.StartTime AS 'StartTime', 
+	r.BuildingName AS 'BuildingName',
         r.RoomNumber AS 'Room', 
         et.Name AS 'ExerciseType', 
         i.Name AS 'Instructor'
@@ -285,13 +283,49 @@ def classes():
 
     return 'Exercise Class Added!<br><a href="/classes">Go Back</a>'
 
+@app.route("/classes/register", methods=["GET", "POST"])
+def class_registration():
+    if request.method == "GET":
+        cnx = mysql.connect()
+        cursor = cnx.cursor()
+        query = """
+        SELECT es.ID 'ClassID', et.Name 'ExerciseType', es.StartTime, es.Duration, 
+            r.BuildingName, r.RoomNumber, i.Name 'Instructor', r.Capacity, COUNT(mes.Member) 'Registered'
+        FROM ExerciseSchedule es
+        LEFT JOIN Room r ON es.Room = r.ID
+        LEFT JOIN MemberExerciseSchedule mes ON es.ID = mes.ExerciseSchedule
+        LEFT JOIN ExerciseType et ON es.ExerciseType = et.ID
+        LEFT JOIN Instructor i ON es.Instructor = i.ID
+        WHERE es.StartTime > NOW() 
+        GROUP BY es.ID, et.Name, es.StartTime, es.Duration,r.BuildingName, r.RoomNumber, i.Name, r.Capacity
+        HAVING COUNT(mes.Member) < r.Capacity
+        """
+        cursor.execute(query)
+        r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        cursor.execute("SELECT * FROM Member")
+        m = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
+        cursor.close()
+        cnx.close()
+        return render_template('class_registration.html', classes=r, members=m)
+    if request.method == "POST":
+        classID = request.form["classID"]
+        member = request.form["member"]
+        cnx = mysql.connect()
+        cursor = cnx.cursor()  
+        query = "INSERT INTO `MemberExerciseSchedule` (`Member`, `ExerciseSchedule`) VALUES ({}, '{}');".format(member, classID)
+        cursor.execute(query)
+        cnx.commit()      
+        cursor.close()
+        cnx.close()
+        return 'Registration complete!<br><a href="/classes/register">Go Back</a>'
+
 
 @app.route("/classes/new", methods=["GET"])
 def new_class():
     if request.method == "GET":
         cnx = mysql.connect()
         cursor = cnx.cursor()
-        cursor.execute("SELECT ID, RoomNumber FROM Room")
+        cursor.execute("SELECT ID, RoomNumber, BuildingName FROM Room")
         rooms = cursor.fetchall()
         cursor.execute("SELECT ID, Name FROM ExerciseType")
         exercises = cursor.fetchall()
@@ -315,7 +349,7 @@ def edit_class():
         exerciseClass["StartTime"] = exerciseClass["StartTime"].strftime('%H:%M')
         # start_date = date(start_datetime.year, start_datetime.month, start_datetime.day)
         # start_time = 
-        cursor.execute("SELECT ID, RoomNumber FROM Room")
+        cursor.execute("SELECT ID, RoomNumber, BuildingName FROM Room")
         rooms = cursor.fetchall()
         cursor.execute("SELECT ID, Name FROM ExerciseType")
         exercises = cursor.fetchall()
@@ -334,7 +368,6 @@ def edit_class():
         start_date = request.form["StartDate"]
         start_time = request.form["StartTime"]
         start_datetime = start_date + ' ' + start_time
-        logging.error(start_time)
         room = request.form["Room"]
         exercise_type = request.form["ExerciseType"]
         instructor = request.form["Instructor"]
