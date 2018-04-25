@@ -248,6 +248,7 @@ def classes():
         SELECT es.ID AS 'ID', 
         es.Duration AS 'Duration', 
         es.StartTime AS 'StartTime', 
+	r.BuildingName AS 'BuildingName',
         r.RoomNumber AS 'Room', 
         et.Name AS 'ExerciseType', 
         i.Name AS 'Instructor'
@@ -324,7 +325,7 @@ def new_class():
     if request.method == "GET":
         cnx = mysql.connect()
         cursor = cnx.cursor()
-        cursor.execute("SELECT ID, RoomNumber FROM Room")
+        cursor.execute("SELECT ID, RoomNumber, BuildingName FROM Room")
         rooms = cursor.fetchall()
         cursor.execute("SELECT ID, Name FROM ExerciseType")
         exercises = cursor.fetchall()
@@ -348,7 +349,7 @@ def edit_class():
         exerciseClass["StartTime"] = exerciseClass["StartTime"].strftime('%H:%M')
         # start_date = date(start_datetime.year, start_datetime.month, start_datetime.day)
         # start_time = 
-        cursor.execute("SELECT ID, RoomNumber FROM Room")
+        cursor.execute("SELECT ID, RoomNumber, BuildingName FROM Room")
         rooms = cursor.fetchall()
         cursor.execute("SELECT ID, Name FROM ExerciseType")
         exercises = cursor.fetchall()
