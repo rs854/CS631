@@ -289,15 +289,15 @@ def class_registration():
         cnx = mysql.connect()
         cursor = cnx.cursor()
         query = """
-        SELECT mes.ExerciseSchedule 'ClassID', et.Name 'ExerciseType', es.StartTime, es.Duration, 
+        SELECT es.ID 'ClassID', et.Name 'ExerciseType', es.StartTime, es.Duration, 
             r.BuildingName, r.RoomNumber, i.Name 'Instructor', r.Capacity, COUNT(mes.Member) 'Registered'
-        FROM ExerciseSchedule es, Room r, MemberExerciseSchedule mes, ExerciseType et, Instructor i
-        WHERE es.StartTime > NOW() AND
-            es.Room = r.ID AND
-            es.ID = mes.ExerciseSchedule AND
-            es.ExerciseType = et.ID AND
-            es.Instructor = i.ID
-        GROUP BY mes.ExerciseSchedule
+        FROM ExerciseSchedule es
+        LEFT JOIN Room r ON es.Room = r.ID
+        LEFT JOIN MemberExerciseSchedule mes ON es.ID = mes.ExerciseSchedule
+        LEFT JOIN ExerciseType et ON es.ExerciseType = et.ID
+        LEFT JOIN Instructor i ON es.Instructor = i.ID
+        WHERE es.StartTime > NOW() 
+        GROUP BY es.ID, et.Name, es.StartTime, es.Duration,r.BuildingName, r.RoomNumber, i.Name, r.Capacity
         HAVING COUNT(mes.Member) < r.Capacity
         """
         cursor.execute(query)
@@ -368,7 +368,6 @@ def edit_class():
         start_date = request.form["StartDate"]
         start_time = request.form["StartTime"]
         start_datetime = start_date + ' ' + start_time
-        logging.error(start_time)
         room = request.form["Room"]
         exercise_type = request.form["ExerciseType"]
         instructor = request.form["Instructor"]
