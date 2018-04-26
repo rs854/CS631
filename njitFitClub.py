@@ -70,23 +70,28 @@ def new_employee():
         try:
             name = request.form["Name"]
         except:
-            name = "NULL"
+            name = None
         try:
             salary = request.form["Salary"]
         except:
-            salary = "NULL"
+            salary = None
         try:
             wage = request.form["Wage"]
         except:
-            wage = "NULL"
+            wage = None
         try:
             numberOfHoursTaught = request.form["NumberHoursTaught"]
         except:
-            numberOfHoursTaught = "NULL"
+            numberOfHoursTaught = None
 
-        query = "INSERT INTO `Instructor` (`Name`, `Salary`, `Wage`, `NumberHoursTaught`) VALUES ('{}', {}, {}, {});".format(name, salary, wage, numberOfHoursTaught)
+        query = ""
+        if salary:
+            query = "INSERT INTO `Instructor` (`Name`, `Salary`) VALUES (%s, %s);"
+            cursor.execute(query, (name, salary))
+        else:
+            query = "INSERT INTO `Instructor` (`Name`, `Wage`, `NumberHoursTaught`) VALUES (%s, %s, %s);"
+            cursor.execute(query, (name, wage, numberOfHoursTaught))
 
-        cursor.execute(query)
         cnx.commit()
 
     cursor.close()
@@ -101,7 +106,7 @@ def edit_employee():
         cnx = mysql.connect()
         cursor = cnx.cursor()
         name = request.args["employeeName"]
-        cursor.execute("SELECT * FROM NJITFitnessClub.Instructor WHERE Name='{}'".format(name))
+        cursor.execute("SELECT * FROM NJITFitnessClub.Instructor WHERE Name=%s", name)
         r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
         cursor.close()
         cnx.close()
@@ -123,9 +128,9 @@ def edit_employee():
         if numberOfHoursTaught in ["", "None"]:
             numberOfHoursTaught = "NULL"
 
-        query = "UPDATE `Instructor` SET `Salary`={}, `Wage`={}, `NumberHoursTaught`={} WHERE `Name` = '{}'".format(salary, wage, numberOfHoursTaught, name)
+        query = "UPDATE `Instructor` SET `Salary`=%s, `Wage`=%s, `NumberHoursTaught`=%s WHERE `Name` = %s"
 
-        cursor.execute(query)
+        cursor.execute(query, (salary, wage, numberOfHoursTaught, name))
         cnx.commit()
         cursor.close()
         cnx.close()
@@ -139,8 +144,8 @@ def remove_employee():
     cursor = cnx.cursor()
 
     name = request.args.get('employeeName', '')
-    query = "DELETE FROM `Instructor` WHERE `Name`='{}'".format(name)
-    cursor.execute(query)
+    query = "DELETE FROM `Instructor` WHERE `Name`=%s"
+    cursor.execute(query, name)
     cnx.commit()
 
     cursor.close()
@@ -171,9 +176,9 @@ def exercises():
         if description == "":
             description = "NULL"
 
-        query = "INSERT INTO `ExerciseType` (`Name`, `Description`) VALUES ('{}', '{}');".format(name, description)
+        query = "INSERT INTO `ExerciseType` (`Name`, `Description`) VALUES (%s, %s);"
 
-        cursor.execute(query)
+        cursor.execute(query, (name, description))
         cnx.commit()
 
     cursor.close()
@@ -194,7 +199,7 @@ def edit_exercise():
         cnx = mysql.connect()
         cursor = cnx.cursor()
         name = request.args["exerciseName"]
-        cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseType WHERE Name='{}'".format(name))
+        cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseType WHERE Name=%s", name)
         r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
         cursor.close()
         cnx.close()
@@ -210,9 +215,9 @@ def edit_exercise():
         if description in ["", "None"]:
             description = "NULL"
 
-        query = "UPDATE `ExerciseType` SET `Description`='{}' WHERE `Name` = '{}'".format(description, name)
+        query = "UPDATE `ExerciseType` SET `Description`=%s WHERE `Name` = %s"
 
-        cursor.execute(query)
+        cursor.execute(query, (description, name))
         cnx.commit()
 
     cursor.close()
@@ -228,8 +233,8 @@ def remove_exercise():
     cursor = cnx.cursor()
 
     name = request.args.get('exerciseName', '')
-    query = "DELETE FROM `ExerciseType` WHERE `Name`='{}'".format(name)
-    cursor.execute(query)
+    query = "DELETE FROM `ExerciseType` WHERE `Name`=%s"
+    cursor.execute(query, name)
     cnx.commit()
 
     cursor.close()
@@ -273,9 +278,9 @@ def classes():
         exercise_type = request.form["ExerciseType"]
         instructor = request.form["Instructor"]
 
-        query = "INSERT INTO `ExerciseSchedule` (`Duration`, `StartTime`, `Room`, `ExerciseType`, `Instructor`) VALUES ({}, '{}', {}, {}, {});".format(duration, start_time, room, exercise_type, instructor)
+        query = "INSERT INTO `ExerciseSchedule` (`Duration`, `StartTime`, `Room`, `ExerciseType`, `Instructor`) VALUES (%s, %s, %s, %s, %s);"
 
-        cursor.execute(query)
+        cursor.execute(query, (duration, start_time, room, exercise_type, instructor))
         cnx.commit()
 
     cursor.close()
@@ -312,8 +317,8 @@ def class_registration():
         member = request.form["member"]
         cnx = mysql.connect()
         cursor = cnx.cursor()  
-        query = "INSERT INTO `MemberExerciseSchedule` (`Member`, `ExerciseSchedule`) VALUES ({}, '{}');".format(member, classID)
-        cursor.execute(query)
+        query = "INSERT INTO `MemberExerciseSchedule` (`Member`, `ExerciseSchedule`) VALUES (%s, %s);"
+        cursor.execute(query, (member, classID))
         cnx.commit()      
         cursor.close()
         cnx.close()
@@ -342,7 +347,7 @@ def edit_class():
         cnx = mysql.connect()
         cursor = cnx.cursor()
         classID = request.args["classID"]
-        cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseSchedule WHERE ID={}".format(classID))
+        cursor.execute("SELECT * FROM NJITFitnessClub.ExerciseSchedule WHERE ID=%s", classID)
         r = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cursor.fetchall()]
         exerciseClass = r[0]
         exerciseClass["StartDate"] = exerciseClass["StartTime"].strftime('%Y-%m-%d')
@@ -372,9 +377,9 @@ def edit_class():
         exercise_type = request.form["ExerciseType"]
         instructor = request.form["Instructor"]
 
-        query = "UPDATE `ExerciseSchedule` SET `Duration`={}, `StartTime`='{}', `Room`={}, `ExerciseType`={}, `Instructor`={} WHERE `ID` = {}".format(duration, start_datetime, room, exercise_type, instructor, classID)
+        query = "UPDATE `ExerciseSchedule` SET `Duration`=%s, `StartTime`=%s, `Room`=%s, `ExerciseType`=%s, `Instructor`=%s WHERE `ID` = %s"
 
-        cursor.execute(query)
+        cursor.execute(query, (duration, start_datetime, room, exercise_type, instructor, classID))
         cnx.commit()
 
     cursor.close()
@@ -390,8 +395,8 @@ def remove_class():
     cursor = cnx.cursor()
 
     classID = request.args["classID"]
-    query = "DELETE FROM `ExerciseSchedule` WHERE `ID`={}".format(classID)
-    cursor.execute(query)
+    query = "DELETE FROM `ExerciseSchedule` WHERE `ID`=%s"
+    cursor.execute(query, classID)
     cnx.commit()
 
     cursor.close()
